@@ -1,24 +1,15 @@
 uniform vec3 uColor;
+
 varying vec3 vNormal;
 varying vec3 vPosition;
 
 #include ../includes/ambientLight.glsl
-
-vec3 directionalLight(vec3 lightColor, float lightIntensity, vec3 normal, vec3 lightPosition, vec3 viewDirection)
-{
-    vec3 lightDirection = normalize(lightPosition);
-    vec3 lightReflection = reflect(-lightDirection, normal);
-
-    // Shading
-    float shading = dot(normal, lightDirection);
-    shading = max(0.0, shading);
-
-    return lightColor * lightIntensity * shading;
-   
-}
+#include ../includes/directionalLight.glsl
 
 void main()
 {
+    vec3 normal = normalize(vNormal);
+
     vec3 viewDirection = normalize(vPosition - cameraPosition);
 
     vec3 color = uColor;
@@ -32,10 +23,11 @@ void main()
     );
     light += directionalLight(
     vec3(0.1, 0.1, 1.0),  // Light color
-    1.0,                 // Light intensity
-    vNormal,             //Normal
+    1.0,                  // Light intensity
+    normal,               //Normal
     vec3(0.0, 0.0, 3.0),  // Light position
-    viewDirection         //View Direction
+    viewDirection,         //View Direction
+    20.0                  // Specular Power
     );
      color *= light;
 
