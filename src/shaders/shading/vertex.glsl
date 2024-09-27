@@ -8,7 +8,8 @@ void main()
     gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
     //model normal
-    vec4 modelNormal = modelMatrix * vec4(normal,0.0);
+    vec4 modelNormal = modelMatrix * vec4(normal, 0.0);
+
     //Varying
     vNormal = modelNormal.xyz;
     vPosition = modelPosition.xyz;
