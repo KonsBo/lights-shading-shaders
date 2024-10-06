@@ -55,8 +55,8 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 camera.position.x = 7;
-camera.position.y = 7;
-camera.position.z = 7;
+camera.position.y = 5;
+camera.position.z = 10;
 scene.add(camera);
 
 // Controls
@@ -70,10 +70,15 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
-// renderer.toneMapping = THREE.ACESFilmicToneMapping
-// renderer.toneMappingExposure = 3
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 3;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(sizes.pixelRatio);
+renderer.setClearColor("#FCF8EE");
+
+// Enable shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Optional, softer shadows
 
 /**
  * Material
@@ -93,56 +98,69 @@ gui.addColor(materialParameters, "color").onChange(() => {
   material.uniforms.uColor.value.set(materialParameters.color);
 });
 
-/**
- * Objects
- */
-// Torus knot
-const torusKnot = new THREE.Mesh(
-  new THREE.TorusKnotGeometry(0.6, 0.25, 128, 32),
-  material
-);
-torusKnot.position.x = 3;
-scene.add(torusKnot);
-
-// Sphere
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(), material);
-sphere.position.x = -3;
-scene.add(sphere);
-
 // Suzanne
 let suzanne = null;
-gltfLoader.load("./suzanne.glb", (gltf) => {
+gltfLoader.load("./playground.glb", (gltf) => {
   suzanne = gltf.scene;
+  suzanne.rotation.y = Math.PI;
   suzanne.traverse((child) => {
-    if (child.isMesh) child.material = material;
+    if (child.isMesh) {
+      child.material = material;
+      child.material.uniforms.uColor.value.set("#A9A9A9");
+      child.castShadow = true; // Enable shadow casting for Suzanne
+      child.receiveShadow = true; // Enable shadow receiving for Suzanne
+    }
   });
   scene.add(suzanne);
 });
+
+// Create a circular floor
+const floorGeometry = new THREE.CircleGeometry(5, 64); // Radius 5, with 64 segments for smoothness
+
+// Create a material for the floor (you can modify this to resemble water)
+const floorMaterial = new THREE.MeshStandardMaterial({
+  color: "#1e90ff", // Water-like color (adjust as needed)
+  transparent: true,
+  opacity: 0.8, // Some transparency to make it look like water
+  side: THREE.DoubleSide, // Render both sides of the circle
+});
+
+// Create the mesh with geometry and material
+const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+
+// Rotate it to lay flat (horizontal plane)
+floor.rotation.x = -Math.PI / 2; // Rotate by 90 degrees along the X-axis
+
+// Position it at the desired height (0 for ground level)
+floor.position.y = 0.2; // You can adjust this value as needed
+
+// Add the circular floor to the scene
+scene.add(floor);
 
 /**
  * Light Helpers
  */
 
 // directionalLightHelper
-const directionalLightHelper = new THREE.Mesh(
-  new THREE.PlaneGeometry(),
-  new THREE.MeshBasicMaterial()
-);
-directionalLightHelper.material.color.setRGB(0.1, 0.1, 1);
-directionalLightHelper.material.side = THREE.DoubleSide;
-directionalLightHelper.position.set(0, 0, 3);
+// const directionalLightHelper = new THREE.Mesh(
+//   new THREE.PlaneGeometry(),
+//   new THREE.MeshBasicMaterial()
+// );
+// directionalLightHelper.material.color.setRGB(0.1, 0.1, 1);
+// directionalLightHelper.material.side = THREE.DoubleSide;
+// directionalLightHelper.position.set(0, 0, 3);
 
-scene.add(directionalLightHelper);
+// scene.add(directionalLightHelper);
 
-//pointLightHelper
-const pointLightHelper = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(0.1, 2),
-  new THREE.MeshBasicMaterial()
-);
-pointLightHelper.material.color.setRGB(1, 0.1, 0.1);
-pointLightHelper.material.side = THREE.DoubleSide;
-pointLightHelper.position.set(0, 2.5, 0);
-scene.add(pointLightHelper);
+// pointLightHelper
+// const pointLightHelper = new THREE.Mesh(
+//   new THREE.IcosahedronGeometry(0.1, 2),
+//   new THREE.MeshBasicMaterial()
+// );
+// pointLightHelper.material.color.setRGB(1, 0.1, 0.1);
+// pointLightHelper.material.side = THREE.DoubleSide;
+// pointLightHelper.position.set(0, 2.5, 0);
+// scene.add(pointLightHelper);
 
 /**
  * Animate
@@ -154,15 +172,8 @@ const tick = () => {
 
   // Rotate objects
   if (suzanne) {
-    suzanne.rotation.x = -elapsedTime * 0.1;
-    suzanne.rotation.y = elapsedTime * 0.2;
+    suzanne.rotation.y = elapsedTime * 0.1;
   }
-
-  sphere.rotation.x = -elapsedTime * 0.1;
-  sphere.rotation.y = elapsedTime * 0.2;
-
-  torusKnot.rotation.x = -elapsedTime * 0.1;
-  torusKnot.rotation.y = elapsedTime * 0.2;
 
   // Update controls
   controls.update();

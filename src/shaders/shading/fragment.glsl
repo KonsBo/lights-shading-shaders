@@ -21,36 +21,36 @@ void main()
     vec3 light = vec3(0.0);
 
     light += ambientLight(
-    vec3(1.0), // Light color
-    0.03       // Light intensity
+    vec3(0.9), // Light color
+    0.2      // Light intensity
     );
     light += directionalLight(
-    vec3(0.1, 0.1, 1.0),  // Light color
-    1.0,                  // Light intensity
+    vec3(0, 0,0),  // Light color
+    0.4,                  // Light intensity
     normal,               //Normal
-    vec3(0.0, 0.0, 3.0),  // Light position
+    vec3(0, 12, 0),  // Light position
     viewDirection,         //View Direction
-    20.0                  // Specular Power
+    10.0                  // Specular Power
     );
      light += pointLight(
-    vec3(1.0, 0.1, 0.1),  //Light color
-    1.0,                  //Light intensity
+    vec3(0, 3.1, 2.0),  //Light color
+    20.0,                  //Light intensity
     normal,               //Normal
-    vec3(0.0, 2.5, 0.0),  //Light position
+    vec3(3, 1, 0.4),  //Light position
+    viewDirection,        //View Direction
+ 30.0,                 //Specular Power
+    vPosition,            //position
+    0.55            //light Decay           
+    );
+     light += pointLight(
+    vec3(5.0, 3.1, 1.0),  //Light color
+    0.2,                  //Light intensity
+    normal,               //Normal
+    vec3(0, 1,-1),  //Light position
     viewDirection,        //View Direction
     20.0,                 //Specular Power
     vPosition,            //position
-    0.25                //light Decay           
-    );
-     light += pointLight(
-    vec3(0.1, 1.0, 0.5),  //Light color
-    1.0,                  //Light intensity
-    normal,               //Normal
-    vec3(2.0, 2.0, 2.0),  //Light position
-    viewDirection,        //View Direction
-    20.0,                 //Specular Power
-    vPosition,            //position
-    0.2                //light Decay           
+    0.18           //light Decay           
     );
      color *= light;
 
