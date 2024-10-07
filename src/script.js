@@ -138,31 +138,6 @@ floor.position.y = 0.2; // You can adjust this value as needed
 scene.add(floor);
 
 /**
- * Light Helpers
- */
-
-// directionalLightHelper
-// const directionalLightHelper = new THREE.Mesh(
-//   new THREE.PlaneGeometry(),
-//   new THREE.MeshBasicMaterial()
-// );
-// directionalLightHelper.material.color.setRGB(0.1, 0.1, 1);
-// directionalLightHelper.material.side = THREE.DoubleSide;
-// directionalLightHelper.position.set(0, 0, 3);
-
-// scene.add(directionalLightHelper);
-
-// pointLightHelper
-// const pointLightHelper = new THREE.Mesh(
-//   new THREE.IcosahedronGeometry(0.1, 2),
-//   new THREE.MeshBasicMaterial()
-// );
-// pointLightHelper.material.color.setRGB(1, 0.1, 0.1);
-// pointLightHelper.material.side = THREE.DoubleSide;
-// pointLightHelper.position.set(0, 2.5, 0);
-// scene.add(pointLightHelper);
-
-/**
  * Animate
  */
 const clock = new THREE.Clock();
